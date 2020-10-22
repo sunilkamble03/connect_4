@@ -1,0 +1,19 @@
+table {
+    margin: 0 auto;
+    padding-top: 150px;    
+    width: 400px;
+    height: 400px;
+    cursor: pointer;
+}
+td {  
+    padding: 30px;
+    border-radius: 50%;
+    background-color: #afa7a7;
+}
+.player1 {
+  background-color: red;
+}
+
+.player2 {
+    background-color: yellow;
+}

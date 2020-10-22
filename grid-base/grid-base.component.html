@@ -1,0 +1,8 @@
+<table>
+   <tbody>
+      <tr *ngFor="let col of rowArray; index as i">
+         <td *ngFor="let col of colArray; index as j" (click)="selectedDisc(i, j)" id="{{i + '-' + j}}"> 
+         </td>
+      </tr>
+   </tbody>
+</table>
