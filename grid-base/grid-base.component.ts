@@ -36,35 +36,21 @@ export class GridBaseComponent implements OnInit {
       }
    }
 
-   checkFirstPlayerPossibilities(data) {
+   checkVerticalPossibilities(data, player: string) {
       for (let j = 0; j < data.length; j++) {
-         const found = this.playerFirst.find(element => element === data[j]);
+         const found = this[player].find(element => element === data[j]);
          if (!found) {
             return;
          } else if (j === data.length - 1) {
             setTimeout(() => {
-               alert('Player 1 Win');
+               alert(player + ' Win');
                location.reload();
             }, 100);
          }
       }
    }
 
-   checkSecondPlayerPossibilities(data) {
-      for (let j = 0; j < data.length; j++) {
-         const found = this.playerSecond.find(element => element === data[j]);
-         if (!found) {
-            break;
-         } else if (j === data.length - 1) {
-            setTimeout(() => {
-               alert('Player 2 Win');
-               location.reload();
-            }, 1000);
-         }
-      }
-   }
-
-   checkHorizontal(horizontalLength, curRow, horizontalCheck) {
+   checkHorizontal(horizontalLength, curRow, horizontalCheck, player) {
       const possibiltyArr = [];
       for (let j = 0 ; j < horizontalLength; j++) {
          const index = curRow + '-' + horizontalCheck++;
@@ -76,15 +62,14 @@ export class GridBaseComponent implements OnInit {
             for (let k = j; k < j + 4; k++) {
                 sortedArr.push(possibiltyArr[k]);
             }
-            this.checkFirstPlayerPossibilities(sortedArr);
-            this.checkSecondPlayerPossibilities(sortedArr);
+            this.checkVerticalPossibilities(sortedArr, player);
          } else {
             break;
          }
       }
    }
 
-   checkDigonalLeftToRight(row, col) {
+   checkDigonalLeftToRight(row, col, player) {
       const possibiltyArr = [];
       let rowLength = row - 3;
       let colLength = col - 3;
@@ -102,15 +87,14 @@ export class GridBaseComponent implements OnInit {
             for (let k = j; k < j + 4; k++) {
                 sortedArr.push(possibiltyArr[k]);
             }
-            this.checkFirstPlayerPossibilities(sortedArr);
-            this.checkSecondPlayerPossibilities(sortedArr);
+            this.checkVerticalPossibilities(sortedArr, player);
          } else {
             break;
          }
       }
    }
 
-   checkDigonalRightToLeft(row, col) {
+   checkDigonalRightToLeft(row, col, player) {
       const possibiltyArr = [];
       let rowLength = row + 3;
       let colLength = col - 3;
@@ -118,12 +102,9 @@ export class GridBaseComponent implements OnInit {
          if ((rowLength < this.rows && colLength >= 0) && (rowLength >= 0 && colLength <= this.colums)) {
             const element = rowLength + '-' + colLength;
             possibiltyArr.push(element);
-            rowLength--;
-            colLength++;
-         } else {
-            rowLength--;
-            colLength++;
          }
+         rowLength--;
+         colLength++;
       }
       for (let j = 0; j < possibiltyArr.length; j++) {
          if (j + 4 <= possibiltyArr.length) {
@@ -131,16 +112,15 @@ export class GridBaseComponent implements OnInit {
             for (let k = j; k < j + 4; k++) {
                 sortedArr.push(possibiltyArr[k]);
             }
-            this.checkFirstPlayerPossibilities(sortedArr);
-            this.checkSecondPlayerPossibilities(sortedArr);
+            this.checkVerticalPossibilities(sortedArr, player);
          } else {
             break;
          }
       }
    }
 
-   checkPlayerFirstWins() {
-      const currentIndex = this.playerFirst[this.playerFirst.length - 1];
+   checkPlayerWins(player: string) {
+      const currentIndex = this[player][this[player].length - 1];
       const possibiltyArr = [];
       possibiltyArr.push(currentIndex);
       const arr = currentIndex.split('-');
@@ -158,35 +138,10 @@ export class GridBaseComponent implements OnInit {
          const prevIndex = ++verticalCheck + '-' + currentCol;
          possibiltyArr.push(prevIndex);
       }
-      this.checkFirstPlayerPossibilities(possibiltyArr);
-      this.checkHorizontal(horizontalCheckLength, currentRow, horizontalCheck);
-      this.checkDigonalLeftToRight(currentRow, currentCol);
-      this.checkDigonalRightToLeft(currentRow, currentCol);
-   }
-
-   checkPlayerSecondtWins() {
-      const currentIndex = this.playerSecond[this.playerSecond.length - 1];
-      const possibiltyArr = [];
-      possibiltyArr.push(currentIndex);
-      const arr = currentIndex.split('-');
-      const currentRow = parseInt(arr[0], 10);
-      const currentCol = parseInt(arr[1], 10);
-      let verticalCheck  = currentRow;
-      let horizontalCheck;
-      const horizontalCheckLength = currentCol + 4;
-      if (currentCol >= 3) {
-         horizontalCheck = currentCol - 3;
-      } else {
-         horizontalCheck = 0;
-      }
-      for (let i = 0 ; i < 3; i++) {
-         const prevIndex = ++verticalCheck + '-' + currentCol;
-         possibiltyArr.push(prevIndex);
-      }
-      this.checkSecondPlayerPossibilities(possibiltyArr);
-      this.checkHorizontal(horizontalCheckLength, currentRow, horizontalCheck);
-      this.checkDigonalLeftToRight(currentRow, currentCol);
-      this.checkDigonalRightToLeft(currentRow, currentCol);
+      this.checkVerticalPossibilities(possibiltyArr, player);
+      this.checkHorizontal(horizontalCheckLength, currentRow, horizontalCheck, player);
+      this.checkDigonalLeftToRight(currentRow, currentCol, player);
+      this.checkDigonalRightToLeft(currentRow, currentCol, player);
    }
 
    setPlayersArr(id) {
@@ -201,11 +156,11 @@ export class GridBaseComponent implements OnInit {
       }
       if (this.playerFirst.length > this.playerSecond.length) {
          if (this.playerFirst.length > 3) {
-            this.checkPlayerFirstWins();
+            this.checkPlayerWins('playerFirst');
          }
       } else {
          if (this.playerSecond.length > 3) {
-            this.checkPlayerSecondtWins();
+            this.checkPlayerWins('playerSecond');
          }
       }
    }
